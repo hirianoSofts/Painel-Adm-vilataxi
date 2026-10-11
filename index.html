@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Painel de administração VilaTáxi">
+  <title>VilaTáxi Admin — Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Ecrã de Carregamento Inicial */
+    .loading-overlay{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s ease, visibility .4s ease}
+    .loading-overlay.fade-out{opacity:0;visibility:hidden}
+    .spinner{width:44px;height:44px;border:4px solid #f1f2f4;border-top-color:#f36b00;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+    .loading-text{font-size:13px;color:#7a808d;font-weight:500}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Dropdown de Perfil / Logout */
+    .admin-profile-wrapper{position:relative}
+    .profile-dropdown{position:absolute;bottom:calc(100% + 8px);left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08);padding:6px;display:none;z-index:30}
+    .profile-dropdown.show{display:block}
+    .profile-dropdown button{width:100%;background:none;border:0;padding:10px 12px;display:flex;align-items:center;gap:8px;font-size:13px;color:#d6574b;border-radius:6px;cursor:pointer;font-weight:500;transition:.15s}
+    .profile-dropdown button:hover{background:#fff0ef}
+    .profile-dropdown button i{font-size:16px}
+  </style>
+</head>
+<body>
+
+  <!-- Ecrã de Progresso Inicial -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <span class="loading-text">A carregar dados da operação...</span>
+  </div>
+
+  <div class="app-shell">
+
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="assets/vilataxi-logo.png" alt="VilaTáxi"></div>
+        <div>
+          <strong>VilaTáxi</strong>
+          <span>Admin</span>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <p class="nav-label">Principal</p>
+        <a href="#overview" class="nav-item active" data-section="overview"><i class="hgi hgi-stroke hgi-dashboard-square-01"></i><span>Visão geral</span></a>
+        <a href="#rides" class="nav-item" data-section="rides"><i class="hgi hgi-stroke hgi-route-01"></i><span>Corridas</span><b id="badgeRides">0</b></a>
+        <a href="#drivers" class="nav-item" data-section="drivers"><i class="hgi hgi-stroke hgi-steering"></i><span>Motoristas</span></a>
+        <a href="#passengers" class="nav-item" data-section="passengers"><i class="hgi hgi-stroke hgi-user-group"></i><span>Passageiros</span></a>
+
+        <p class="nav-label">Operação</p>
+        <a href="#payments" class="nav-item" data-section="payments"><i class="hgi hgi-stroke hgi-wallet-01"></i><span>Pagamentos</span></a>
+        <a href="#support" class="nav-item" data-section="support"><i class="hgi hgi-stroke hgi-headphones"></i><span>Suporte</span><b class="dot"></b></a>
+        <a href="#analytics" class="nav-item" data-section="analytics"><i class="hgi hgi-stroke hgi-chart-line-data-01"></i><span>Analytics</span></a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="city-card">
+          <div class="city-icon"><i class="hgi hgi-stroke hgi-location-01"></i></div>
+          <div>
+            <span>Operação atual</span>
+            <strong>Vilankulos, MZ</strong>
+          </div>
+          <i class="hgi hgi-stroke hgi-arrow-down-01"></i>
+        </div>
+
+        <div class="admin-profile-wrapper">
+          <!-- Dropdown com Opção de Sair -->
+          <div class="profile-dropdown" id="profileDropdown">
+            <button id="logoutBtn"><i class="hgi hgi-stroke hgi-logout-01"></i> Terminar sessão</button>
+          </div>
+          <div class="admin-profile">
+            <div class="avatar">H</div>
+            <div class="admin-info">
+              <strong id="sidebarAdminName">Administrador</strong>
+              <span>Super admin</span>
+            </div>
+            <button class="icon-btn" id="profileMenuBtn" aria-label="Menu de Perfil"><i class="hgi hgi-stroke hgi-more-vertical"></i></button>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="mobile-menu icon-btn" id="menuBtn"><i class="hgi hgi-stroke hgi-menu-01"></i></button>
+        <div class="topbar-title">
+          <div class="breadcrumb"><span>VilaTáxi</span><i class="hgi hgi-stroke hgi-arrow-right-01"></i><strong id="pageLabel">Visão geral</strong></div>
+          <h1 id="pageTitle">Visão geral</h1>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn notification" aria-label="Notificações"><i class="hgi hgi-stroke hgi-notification-02"></i><span></span></button>
+          <div class="top-avatar">H</div>
+        </div>
+      </header>
+
+      <div class="content">
+
+        <!-- Visão Geral -->
+        <section class="page-section active" id="overview">
+          <div class="welcome-row">
+            <div>
+              <p class="eyebrow" id="currentDateText">Sábado, 10 de Outubro de 2026</p>
+              <h2>Bom trabalho, <span id="greetingUserName">Administrador</span>. <span>👋</span></h2>
+              <p class="muted">Aqui está o que está a acontecer na operação em tempo real.</p>
+            </div>
+            <button class="primary-btn" id="exportBtn"><i class="hgi hgi-stroke hgi-download-02"></i> Exportar relatório</button>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-top"><span>Receita total</span><div class="stat-icon orange"><i class="hgi hgi-stroke hgi-money-03"></i></div></div>
+              <strong class="stat-number" id="statRevenue">0 <small>MT</small></strong>
+              <div class="trend up"><i class="hgi hgi-stroke hgi-trending-up-01"></i> Sincronizado <span>agora</span></div>
+              <div class="sparkline" id="revenueSparkline"></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Corridas concluídas</span><div class="stat-icon blue"><i class="hgi hgi-stroke hgi-route-01"></i></div></div>
+              <strong class="stat-number" id="statCompletedRides">0</strong>
+              <div class="trend up"><i class="hgi hgi-stroke hgi-trending-up-01"></i> Real-time <span>Firebase</span></div>
+              <div class="sparkline" id="ridesSparkline"></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Motoristas online</span><div class="stat-icon green"><i class="hgi hgi-stroke hgi-steering"></i></div></div>
+              <strong class="stat-number" id="statOnlineDrivers">0</strong>
+              <div class="trend neutral"><span class="status-pulse"></span> <span id="statActiveRidesCount">0</span> em corrida <span>agora</span></div>
+              <div class="mini-progress"><div id="driverProgressBar" style="width:0%"></div></div>
+              <div class="progress-caption"><span>Total frota</span><strong id="statTotalDrivers">0</strong></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span>Total passageiros</span><div class="stat-icon purple"><i class="hgi hgi-stroke hgi-user-add-01"></i></div></div>
+              <strong class="stat-number" id="statTotalPassengers">0</strong>
+              <div class="trend up"><i class="hgi hgi-stroke hgi-trending-up-01"></i> Registados <span>na app</span></div>
+              <div class="mini-progress purple-progress"><div style="width:100%"></div></div>
+              <div class="progress-caption"><span>Base de dados</span><strong>Ativa</strong></div>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel revenue-panel">
+              <div class="panel-header">
+                <div><h3>Receita</h3><p>Visão geral de transações em tempo real</p></div>
+                <select id="revenueFilter"><option>Geral</option></select>
+              </div>
+              <div class="chart-wrap">
+                <div class="chart-y" id="chartYLabels"><span>25k</span><span>20k</span><span>15k</span><span>10k</span><span>5k</span><span>0</span></div>
+                <div class="chart-area">
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <svg viewBox="0 0 700 260" preserveAspectRatio="none" class="line-chart" id="revenueSvgChart">
+                    <defs><linearGradient id="area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7900" stop-opacity=".20"/><stop offset="1" stop-color="#ff7900" stop-opacity="0"/></linearGradient></defs>
+                    <path id="revenueSvgArea" d="M0 260 L700 260 Z" fill="url(#area)"/>
+                    <path id="revenueSvgLine" d="M0 260 L700 260" fill="none" stroke="#f46b00" stroke-width="3" stroke-linecap="round"/>
+                    <circle id="revenueSvgCircle" cx="700" cy="260" r="5" fill="#fff" stroke="#f46b00" stroke-width="3"/>
+                  </svg>
+                  <div class="chart-x" id="chartXLabels"><span>Início</span><span>...</span><span>Hoje</span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel activity-panel">
+              <div class="panel-header"><div><h3>Atividade em tempo real</h3><p>Atualizações do Firebase</p></div><span class="live"><i></i> Live</span></div>
+              <div class="activity-list" id="realtimeActivityList">
+                <div class="activity-item"><div class="activity-icon ride"><i class="hgi hgi-stroke hgi-car-05"></i></div><div><strong>A aguardar dados...</strong><span>A ligar ao Firebase</span></div><b>—</b></div>
+              </div>
+              <button class="ghost-btn full" data-go="rides">Ver todas as corridas <i class="hgi hgi-stroke hgi-arrow-right-01"></i></button>
+            </article>
+          </div>
+
+          <div class="bottom-grid">
+            <article class="panel table-panel">
+              <div class="panel-header"><div><h3>Corridas recentes</h3><p>Últimas viagens sincronizadas</p></div><button class="link-btn" data-go="rides">Ver todas <i class="hgi hgi-stroke hgi-arrow-right-01"></i></button></div>
+              <div class="table-scroll">
+                <table>
+                  <thead><tr><th>ID</th><th>Passageiro ID</th><th>Motorista</th><th>Valor</th><th>Estado</th><th></th></tr></thead>
+                  <tbody id="overviewRidesTable">
+                    <tr><td colspan="6" style="text-align: center;">A carregar dados do Firebase...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel drivers-panel">
+              <div class="panel-header"><div><h3>Motoristas</h3><p>Estado da frota</p></div><button class="link-btn" data-go="drivers">Gerir <i class="hgi hgi-stroke hgi-arrow-right-01"></i></button></div>
+              <div class="driver-stats">
+                <div><strong id="dashTotalDrivers">0</strong><span>Total</span></div><div><strong class="green-text" id="dashOnlineDrivers">0</strong><span>Online</span></div><div><strong id="dashBusyDrivers">0</strong><span>Em corrida</span></div>
+              </div>
+              <div class="driver-bar"><span style="width:50%"></span><span style="width:25%"></span><span style="width:25%"></span></div>
+              <div class="legend"><span><i class="l-online"></i> Online</span><span><i class="l-ride"></i> Em corrida</span><span><i class="l-offline"></i> Offline</span></div>
+              <div class="driver-list" id="dashDriversList"></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Corridas -->
+        <section class="page-section" id="rides">
+          <div class="section-toolbar"><div><h2>Corridas</h2><p class="muted">Acompanhe e gira todas as viagens em tempo real.</p></div></div>
+          <div class="filter-row"><div class="search"><i class="hgi hgi-stroke hgi-search-01"></i><input id="searchRidesInput" placeholder="Pesquisar corrida..."></div></div>
+          <div class="panel table-panel standalone"><div class="table-scroll"><table><thead><tr><th>ID</th><th>Passageiro</th><th>Motorista</th><th>Origem</th><th>Destino</th><th>Valor</th><th>Estado</th></tr></thead><tbody id="fullRidesTable">
+            <tr><td colspan="7" style="text-align: center;">A carregar...</td></tr>
+          </tbody></table></div></div>
+        </section>
+
+        <!-- Motoristas -->
+        <section class="page-section" id="drivers">
+          <div class="section-toolbar"><div><h2>Motoristas</h2><p class="muted">Gestão da frota registada.</p></div></div>
+          <div class="stats-grid compact"><article class="stat-card"><span>Total</span><strong class="stat-number" id="driversTotalCard">0</strong></article><article class="stat-card"><span>Online</span><strong class="stat-number green-text" id="driversOnlineCard">0</strong></article></div>
+          <div class="panel table-panel standalone"><div class="table-scroll"><table><thead><tr><th>Motorista</th><th>Veículo / Cor</th><th>Contacto</th><th>Preço/Km</th><th>Estado</th></tr></thead><tbody id="fullDriversTable">
+            <tr><td colspan="5" style="text-align: center;">A carregar...</td></tr>
+          </tbody></table></div></div>
+        </section>
+
+        <!-- Passageiros -->
+        <section class="page-section" id="passengers">
+          <div class="section-toolbar"><div><h2>Passageiros</h2><p class="muted">Clientes registados na plataforma.</p></div></div>
+          <div class="panel table-panel standalone"><div class="table-scroll"><table><thead><tr><th>Passageiro</th><th>Email</th><th>Tipo</th><th>Desconto</th><th>Registo</th></tr></thead><tbody id="fullPassengersTable">
+            <tr><td colspan="5" style="text-align: center;">A carregar...</td></tr>
+          </tbody></table></div></div>
+        </section>
+
+        <!-- Pagamentos -->
+        <section class="page-section" id="payments">
+          <div class="section-toolbar"><div><h2>Pagamentos</h2><p class="muted">Transações e receitas das viagens.</p></div></div>
+          <div class="panel table-panel standalone"><div class="table-scroll"><table><thead><tr><th>Transação / ID</th><th>Método</th><th>Valor</th><th>Estado</th></tr></thead><tbody id="fullPaymentsTable">
+            <tr><td colspan="4" style="text-align: center;">A carregar...</td></tr>
+          </tbody></table></div></div>
+        </section>
+
+        <section class="page-section placeholder-page" id="support"><div class="empty-card"><div class="empty-icon"><i class="hgi hgi-stroke hgi-headphones"></i></div><h2>Suporte</h2><p>Central de atendimento.</p></div></section>
+
+        <!-- Analytics Avançado -->
+        <section class="page-section" id="analytics">
+          <div class="section-toolbar">
+            <div>
+              <h2>Analytics & Relatórios</h2>
+              <p class="muted">Análise de desempenho da frota e métricas baseadas no progresso real.</p>
+            </div>
+          </div>
+          <div class="dashboard-grid">
+            <article class="panel">
+              <div class="panel-header">
+                <div><h3>Crescimento de Viagens</h3><p>Volume acumulado por período</p></div>
+              </div>
+              <div class="chart-wrap">
+                <div class="chart-y" id="analyticsYLabels"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div>
+                <div class="chart-area">
+                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
+                  <svg viewBox="0 0 700 260" preserveAspectRatio="none" class="line-chart" id="analyticsSvgChart">
+                    <path id="analyticsSvgLine" d="M0 260 L700 260" fill="none" stroke="#3976d8" stroke-width="3" stroke-linecap="round"/>
+                    <circle id="analyticsSvgCircle" cx="700" cy="260" r="5" fill="#fff" stroke="#3976d8" stroke-width="3"/>
+                  </svg>
+                  <div class="chart-x" id="analyticsXLabels"><span>Início</span><span>Fim</span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-header">
+                <div><h3>Métricas da Frota</h3><p>Taxa de conclusão e conversão</p></div>
+              </div>
+              <div style="padding: 10px 0;">
+                <div style="margin-bottom: 20px;">
+                  <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px;">
+                    <span>Corridas Concluídas com Sucesso</span>
+                    <span id="analyticsSuccessRate">0%</span>
+                  </div>
+                  <div class="mini-progress" style="height:10px;"><div id="analyticsProgressBar" style="width:0%"></div></div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                  <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px;">
+                    <span>Motoristas Online Atuais</span>
+                    <span id="analyticsOnlineDriversCount">0</span>
+                  </div>
+                  <div class="mini-progress purple-progress" style="height:10px;"><div id="analyticsDriverProgressBar" style="width:0%"></div></div>
+                </div>
+                <div style="background:#fafafa; padding:15px; border-radius:10px; margin-top:15px;">
+                  <strong style="font-size:13px; display:block; margin-bottom:4px;">Receita Média por Corrida</strong>
+                  <span id="analyticsAvgRevenue" style="font-size:22px; font-weight:700; color:#f36b00;">0 MT</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <div class="mobile-overlay" id="overlay"></div>
+  <div class="toast" id="toast"><i class="hgi hgi-stroke hgi-checkmark-circle-02"></i><span>Atualizado com sucesso.</span></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
