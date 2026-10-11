@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Entre ou crie a sua conta VilaTáxi.">
+  <title>VilaTáxi — Aceder à sua conta</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.hugeicons.com/font/hgi-stroke-rounded.css">
+
+  <style>
+    :root {
+      --orange: #f4510b;
+      --orange-dark: #d94100;
+      --orange-light: #fff2eb;
+      --black: #161616;
+      --text: #252525;
+      --muted: #555b66;
+      --border: #e6e8ec;
+      --background: #f8f9fb;
+      --white: #ffffff;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--background);
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background:
+        radial-gradient(ellipse at 50% -20%, #ffe4d5 0%, transparent 48%),
+        var(--background);
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+
+    .auth-layout {
+      width: 100%;
+      max-width: 960px;
+      display: grid;
+      grid-template-columns: 1fr 440px;
+      align-items: stretch;
+      gap: 64px;
+    }
+
+    /* Área de apresentação */
+
+    .intro {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 10px;
+      padding: 8px 14px;
+      margin-bottom: 25px;
+      border: 1px solid #ffd5c1;
+      border-radius: 100px;
+      background: #fff8f4;
+      color: #bc430c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .eyebrow-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--orange);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px #f4510b16;
+    }
+
+    .intro h1 {
+      max-width: 450px;
+      margin-bottom: 20px;
+      color: var(--black);
+      font-size: clamp(36px, 4.2vw, 52px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -2px;
+    }
+
+    .intro h1 span {
+      color: var(--orange);
+    }
+
+    .intro-description {
+      max-width: 420px;
+      color: #555b66;
+      font-size: 16px;
+      line-height: 1.75;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 18px;
+      margin-top: 36px;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #333842;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .benefit-icon {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: var(--orange);
+      background: #fff0e8;
+      border: 1px solid #ffe1d1;
+      border-radius: 11px;
+      font-size: 18px;
+    }
+
+    .intro-bottom {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #666d7a;
+      font-size: 13px;
+    }
+
+    .avatar-stack {
+      display: flex;
+      align-items: center;
+      padding-left: 5px;
+    }
+
+    .avatar-stack span {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      margin-left: -6px;
+      border: 2px solid var(--background);
+      border-radius: 50%;
+      background: #ffdfcc;
+      color: #8c350e;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .avatar-stack span:nth-child(2) {
+      background: #e3e7ff;
+      color: #4248a4;
+    }
+
+    .avatar-stack span:nth-child(3) {
+      background: #d8f1e6;
+      color: #1e7553;
+    }
+
+    /* Cartão de autenticação */
+
+    .auth-card {
+      width: 100%;
+      padding: 38px;
+      background: var(--white);
+      border: 1px solid #e6e8ec;
+      border-radius: 20px;
+      box-shadow:
+        0 2px 4px #11182705,
+        0 12px 36px #11182708,
+        0 35px 75px #11182705;
+    }
+
+    .mobile-brand {
+      display: none;
+    }
+
+    .auth-title {
+      margin-bottom: 25px;
+    }
+
+    .auth-title h2 {
+      margin-bottom: 8px;
+      color: var(--black);
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.8px;
+    }
+
+    .auth-title p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .error-msg,
+    .success-msg {
+      display: none;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .error-msg {
+      color: #b42318;
+      background: #fff1f0;
+      border: 1px solid #ffd7d3;
+    }
+
+    .success-msg {
+      color: #147344;
+      background: #edfcf3;
+      border: 1px solid #c8f0d7;
+    }
+
+    .google-btn {
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border: 1px solid #dfe2e7;
+      border-radius: 10px;
+      background: #fff;
+      color: #292d33;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background .2s, border-color .2s, transform .2s;
+    }
+
+    .google-btn:hover {
+      background: #fafbfc;
+      border-color: #bfc4cd;
+    }
+
+    .google-btn:active,
+    .primary-btn:active {
+      transform: scale(.99);
+    }
+
+    .google-btn:disabled,
+    .primary-btn:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 24px 0;
+      color: #7b828f;
+      font-size: 13px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #eaecf0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .form-group label {
+      display: block;
+      color: #2e333b;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .forgot-link {
+      color: var(--orange);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      transform: translateY(-50%);
+      color: #7b828f;
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    .form-group input {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px 0 44px;
+      border: 1px solid #dfe2e7;
+      border-radius: 10px;
+      outline: none;
+      background: #fff;
+      color: #1a1d23;
+      font-size: 14px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .form-group input::placeholder {
+      color: #9ba1ad;
+    }
+
+    .form-group input:hover {
+      border-color: #c5c9d1;
+    }
+
+    .form-group input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px #f4510b16;
+    }
+
+    .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #707784;
+      font-size: 18px;
+    }
+
+    .password-toggle:hover {
+      color: var(--orange);
+      background: #fff4ee;
+    }
+
+    .password-input {
+      padding-right: 48px !important;
+    }
+
+    .primary-btn {
+      width: 100%;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--orange);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 3px 8px #f4510b1c;
+      transition: background .2s, box-shadow .2s, transform .2s;
+      margin-top: 6px;
+    }
+
+    .primary-btn:hover {
+      background: var(--orange-dark);
+      box-shadow: 0 5px 14px #f4510b30;
+    }
+
+    .primary-btn .hgi-stroke {
+      font-size: 18px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ffffff65;
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .auth-footer {
+      margin-top: 26px;
+      padding-top: 22px;
+      border-top: 1px solid #eff0f3;
+      text-align: center;
+      color: #666d7a;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .auth-footer a {
+      margin-left: 6px;
+      color: var(--orange);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .security-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+      color: #7b828f;
+      font-size: 12px;
+    }
+
+    .security-note i {
+      color: #27865b;
+      font-size: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .auth-layout {
+        max-width: 470px;
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .intro {
+        display: none;
+      }
+
+      .main {
+        padding: 24px 20px;
+      }
+
+      .auth-card {
+        padding: 34px;
+      }
+
+      .mobile-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+
+      .mobile-brand img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+
+      .mobile-brand strong {
+        display: block;
+        color: var(--black);
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: -0.6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        background: #fff;
+      }
+
+      .main {
+        align-items: flex-start;
+        padding: 16px 20px;
+      }
+
+      .auth-card {
+        padding: 12px 0 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .mobile-brand {
+        margin-bottom: 30px;
+      }
+
+      .auth-title h2 {
+        font-size: 27px;
+      }
+
+      .auth-title p {
+        font-size: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="main">
+    <div class="auth-layout">
+
+      <section class="intro" aria-label="Apresentação do painel">
+        <div class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          PLATAFORMA DE GESTÃO VILATÁXI
+        </div>
+
+        <h1>
+          A sua operação.<br>
+          O seu controlo.<br>
+          <span>Num só lugar.</span>
+        </h1>
+
+        <p class="intro-description">
+          Aceda ao seu espaço de gestão e acompanhe a operação VilaTáxi
+          com uma experiência simples, rápida e segura.
+        </p>
+
+        <div class="benefits">
+          <div class="benefit">
+            <div class="benefit-icon">
+              <i class="hgi-stroke hgi-chart-line-data-02"></i>
+            </div>
+            <span>Acompanhe a operação num só painel</span>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">
+              <i class="hgi-stroke hgi-shield-01"></i>
+            </div>
+            <span>Acesso protegido à sua conta</span>
+          </div>
+
+          <div class="benefit">
+            <div class="benefit-icon">
+              <i class="hgi-stroke hgi-flash"></i>
+            </div>
+            <span>Gestão simples, rápida e intuitiva</span>
+          </div>
+        </div>
+
+        <div class="intro-bottom">
+          <div class="avatar-stack" aria-hidden="true">
+            <span>V</span>
+            <span>T</span>
+            <span>+</span>
+          </div>
+          <span>Uma plataforma feita para manter tudo em movimento.</span>
+        </div>
+      </section>
+
+      <section class="auth-card" aria-labelledby="formTitle">
+
+        <a href="../index.html" class="mobile-brand">
+          <img src="../assets/vilataxi-logo.png" alt="VilaTáxi">
+          <div>
+            <strong>VilaTáxi</strong>
+          </div>
+        </a>
+
+        <div class="auth-title">
+          <h2 id="formTitle">Bem-vindo de volta</h2>
+          <p id="formSubtitle">
+            Entre na sua conta para aceder ao painel de gestão.
+          </p>
+        </div>
+
+        <div class="error-msg" id="errorMsg" role="alert" aria-live="polite">
+          <i class="hgi-stroke hgi-alert-circle"></i>
+          <span id="errorText"></span>
+        </div>
+
+        <div class="success-msg" id="successMsg" role="status" aria-live="polite">
+          <i class="hgi-stroke hgi-check-circle"></i>
+          <span id="successText"></span>
+        </div>
+
+        <button class="google-btn" type="button" id="googleLoginBtn">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.18v3.14C3.15 21.32 7.22 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.18C.43 8.13 0 9.82 0 12s.43 3.87 1.18 5.38l4.09-3.14z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.18 6.62l4.09 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+          </svg>
+          Continuar com a Google
+        </button>
+
+        <div class="divider">
+          <span>ou continue com o seu email</span>
+        </div>
+
+        <form id="authForm" novalidate>
+          <div class="form-group">
+            <label for="emailInput">Endereço de email</label>
+            <div class="input-wrap">
+              <i class="hgi-stroke hgi-mail-01 input-icon"></i>
+              <input
+                type="email"
+                id="emailInput"
+                name="email"
+                placeholder="nome@empresa.com"
+                autocomplete="email"
+                maxlength="254"
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="passwordInput">Palavra-passe</label>
+              <a href="#" class="forgot-link" id="forgotPasswordBtn">
+                Esqueceu-se?
+              </a>
+            </div>
+
+            <div class="input-wrap">
+              <i class="hgi-stroke hgi-lock input-icon"></i>
+              <input
+                type="password"
+                id="passwordInput"
+                class="password-input"
+                name="password"
+                placeholder="Introduza a sua palavra-passe"
+                autocomplete="current-password"
+                minlength="6"
+                required
+              >
+              <button
+                class="password-toggle"
+                type="button"
+                id="togglePasswordBtn"
+                aria-label="Mostrar palavra-passe"
+                aria-pressed="false"
+              >
+                <i class="hgi-stroke hgi-view"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="primary-btn" id="submitBtn">
+            <span id="submitText">Entrar no painel</span>
+            <i class="hgi-stroke hgi-arrow-right-02" id="submitIcon"></i>
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <span id="toggleText">Ainda não tem uma conta?</span>
+          <a href="#" id="toggleModeBtn">Criar conta</a>
+        </div>
+
+        <div class="security-note">
+          <i class="hgi-stroke hgi-shield-check"></i>
+          A sua ligação é protegida pelo Firebase Authentication.
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+    import {
+      getAuth,
+      signInWithPopup,
+      GoogleAuthProvider,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      sendPasswordResetEmail
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAijmOTx-PiEHJcABeDhVL3idelJ9ix0ao",
+      authDomain: "vilataxi1.firebaseapp.com",
+      databaseURL: "https://vilataxi1-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "vilataxi1",
+      storageBucket: "vilataxi1.firebasestorage.app",
+      messagingSenderId: "638731214540",
+      appId: "1:638731214540:web:98f43e3acbc3059aa9ec69",
+      measurementId: "G-ELZHGG692B"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    let isRegistering = false;
+    let isLoading = false;
+
+    const $ = id => document.getElementById(id);
+
+    const form = $("authForm");
+    const emailInput = $("emailInput");
+    const passwordInput = $("passwordInput");
+    const submitBtn = $("submitBtn");
+    const submitText = $("submitText");
+    const submitIcon = $("submitIcon");
+    const toggleText = $("toggleText");
+    const toggleModeBtn = $("toggleModeBtn");
+    const errorMsg = $("errorMsg");
+    const errorText = $("errorText");
+    const successMsg = $("successMsg");
+    const successText = $("successText");
+    const googleBtn = $("googleLoginBtn");
+
+    function hideMessages() {
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+    }
+
+    function showError(message) {
+      successMsg.style.display = "none";
+      errorText.textContent = message;
+      errorMsg.style.display = "flex";
+    }
+
+    function showSuccess(message) {
+      errorMsg.style.display = "none";
+      successText.textContent = message;
+      successMsg.style.display = "flex";
+    }
+
+    function setLoading(loading, text = "") {
+      isLoading = loading;
+      submitBtn.disabled = loading;
+      googleBtn.disabled = loading;
+      toggleModeBtn.style.pointerEvents = loading ? "none" : "";
+      $("forgotPasswordBtn").style.pointerEvents = loading ? "none" : "";
+
+      if (loading) {
+        submitBtn.innerHTML = `
+          <span>${text || "A processar..."}</span>
+          <span class="spinner" aria-hidden="true"></span>
+        `;
+      } else {
+        submitBtn.innerHTML = `
+          <span id="submitText"></span>
+          <i class="hgi-stroke hgi-arrow-right-02" id="submitIcon"></i>
+        `;
+
+        $("submitText").textContent = isRegistering
+          ? "Criar a minha conta"
+          : "Entrar no painel";
+      }
+    }
+
+    function updateMode() {
+      $("formTitle").textContent = isRegistering
+        ? "Criar a sua conta"
+        : "Bem-vindo de volta";
+
+      $("formSubtitle").textContent = isRegistering
+        ? "Preencha os dados abaixo para começar."
+        : "Entre na sua conta para aceder ao painel de gestão.";
+
+      $("submitText").textContent = isRegistering
+        ? "Criar a minha conta"
+        : "Entrar no painel";
+
+      toggleText.textContent = isRegistering
+        ? "Já tem uma conta?"
+        : "Ainda não tem uma conta?";
+
+      toggleModeBtn.textContent = isRegistering
+        ? "Iniciar sessão"
+        : "Criar conta";
+
+      passwordInput.autocomplete = isRegistering
+        ? "new-password"
+        : "current-password";
+
+      hideMessages();
+    }
+
+    toggleModeBtn.addEventListener("click", event => {
+      event.preventDefault();
+
+      if (isLoading) return;
+
+      isRegistering = !isRegistering;
+      updateMode();
+    });
+
+    $("togglePasswordBtn").addEventListener("click", () => {
+      const showing = passwordInput.type === "text";
+
+      passwordInput.type = showing ? "password" : "text";
+
+      $("togglePasswordBtn").innerHTML = showing
+        ? '<i class="hgi-stroke hgi-view"></i>'
+        : '<i class="hgi-stroke hgi-view-off"></i>';
+
+      $("togglePasswordBtn").setAttribute(
+        "aria-label",
+        showing ? "Mostrar palavra-passe" : "Ocultar palavra-passe"
+      );
+
+      $("togglePasswordBtn").setAttribute(
+        "aria-pressed",
+        String(!showing)
+      );
+    });
+
+    function getFriendlyError(error) {
+      const messages = {
+        "auth/invalid-email": "Introduza um endereço de email válido.",
+        "auth/user-not-found": "Não foi encontrada uma conta com estes dados.",
+        "auth/wrong-password": "Email ou palavra-passe incorretos.",
+        "auth/invalid-credential": "Email ou palavra-passe incorretos.",
+        "auth/email-already-in-use": "Este email já está associado a uma conta.",
+        "auth/weak-password": "A palavra-passe deve ter pelo menos 6 caracteres.",
+        "auth/too-many-requests": "Demasiadas tentativas. Aguarde um pouco e tente novamente.",
+        "auth/popup-closed-by-user": "A janela de autenticação foi fechada.",
+        "auth/popup-blocked": "O navegador bloqueou a janela de autenticação. Permita pop-ups e tente novamente.",
+        "auth/network-request-failed": "Falha de ligação. Verifique a sua internet e tente novamente.",
+        "auth/operation-not-allowed": "Este método de autenticação ainda não está ativado no Firebase.",
+        "auth/unauthorized-domain": "Este domínio não está autorizado no Firebase Authentication.",
+        "auth/account-exists-with-different-credential": "Já existe uma conta com este email. Experimente o método de acesso original."
+      };
+
+      return messages[error.code]
+        || "Não foi possível concluir a operação. Tente novamente.";
+    }
+
+    function saveUser(user) {
+      localStorage.setItem("vilataxi_user", JSON.stringify({
+        name: user.displayName || user.email?.split("@")[0] || "Utilizador",
+        email: user.email || "",
+        photo: user.photoURL || null
+      }));
+
+      window.location.href = "../index.html";
+    }
+
+    // Autenticação com Google
+    googleBtn.addEventListener("click", async () => {
+      if (isLoading) return;
+
+      hideMessages();
+      setLoading(true, "A ligar à Google...");
+
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        saveUser(result.user);
+      } catch (error) {
+        showError(getFriendlyError(error));
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Login e registo com email
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (isLoading) return;
+
+      hideMessages();
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!emailInput.checkValidity()) {
+        showError("Introduza um endereço de email válido.");
+        emailInput.focus();
+        return;
+      }
+
+      if (password.length < 6) {
+        showError("A palavra-passe deve ter pelo menos 6 caracteres.");
+        passwordInput.focus();
+        return;
+      }
+
+      setLoading(true, isRegistering
+        ? "A criar a conta..."
+        : "A iniciar sessão...");
+
+      try {
+        let userCredential;
+
+        if (isRegistering) {
+          userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+        } else {
+          userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+        }
+
+        saveUser(userCredential.user);
+      } catch (error) {
+        showError(getFriendlyError(error));
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    // Recuperação da palavra-passe
+    $("forgotPasswordBtn").addEventListener("click", async event => {
+      event.preventDefault();
+
+      if (isLoading) return;
+
+      hideMessages();
+
+      const email = emailInput.value.trim();
+
+      if (!email || !emailInput.checkValidity()) {
+        showError("Introduza o seu email no campo acima para recuperar a palavra-passe.");
+        emailInput.focus();
+        return;
+      }
+
+      setLoading(true, "A enviar email...");
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+
+        showSuccess(
+          "Se existir uma conta associada a este endereço, receberá instruções para redefinir a palavra-passe."
+        );
+      } catch (error) {
+        if (error.code === "auth/user-not-found") {
+          showSuccess(
+            "Se existir uma conta associada a este endereço, receberá instruções para redefinir a palavra-passe."
+          );
+        } else {
+          showError(getFriendlyError(error));
+        }
+      } finally {
+        setLoading(false);
+      }
+    });
+  </script>
+
+</body>
+</html>
