@@ -27,6 +27,10 @@
     .profile-dropdown button{width:100%;background:none;border:0;padding:10px 12px;display:flex;align-items:center;gap:8px;font-size:13px;color:#d6574b;border-radius:6px;cursor:pointer;font-weight:500;transition:.15s}
     .profile-dropdown button:hover{background:#fff0ef}
     .profile-dropdown button i{font-size:16px}
+
+    /* Botão de Apagar Tabela */
+    .danger-action-btn{background:#fff0ef;color:#d6574b;border:0;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+    .danger-action-btn:hover{background:#ffe3e1}
   </style>
 </head>
 <body>
@@ -58,7 +62,7 @@
         <p class="nav-label">Operação</p>
         <a href="#payments" class="nav-item" data-section="payments"><i class="hgi hgi-stroke hgi-wallet-01"></i><span>Pagamentos</span></a>
         <a href="#support" class="nav-item" data-section="support"><i class="hgi hgi-stroke hgi-headphones"></i><span>Suporte</span><b class="dot"></b></a>
-        <a href="#analytics" class="nav-item" data-section="analytics"><i class="hgi hgi-stroke hgi-chart-line-data-01"></i><span>Analytics</span></a>
+        <a href="#configs" class="nav-item" data-section="configs"><i class="hgi hgi-stroke hgi-settings-02"></i><span>Configurações</span></a>
       </nav>
 
       <div class="sidebar-bottom">
@@ -72,7 +76,6 @@
         </div>
 
         <div class="admin-profile-wrapper">
-          <!-- Dropdown com Opção de Sair -->
           <div class="profile-dropdown" id="profileDropdown">
             <button id="logoutBtn"><i class="hgi hgi-stroke hgi-logout-01"></i> Terminar sessão</button>
           </div>
@@ -107,7 +110,7 @@
         <section class="page-section active" id="overview">
           <div class="welcome-row">
             <div>
-              <p class="eyebrow" id="currentDateText">Domingo, 11 de Outubro de 2026</p>
+              <p class="eyebrow" id="currentDateText">Sábado, 10 de Outubro de 2026</p>
               <h2>Bom trabalho, <span id="greetingUserName">Administrador</span>. <span>👋</span></h2>
               <p class="muted">Aqui está o que está a acontecer na operação em tempo real.</p>
             </div>
@@ -198,12 +201,12 @@
           </div>
         </section>
 
-        <!-- Corridas -->
+        <!-- Corridas (Com botão de apagar com confirmação) -->
         <section class="page-section" id="rides">
-          <div class="section-toolbar"><div><h2>Corridas</h2><p class="muted">Acompanhe e gira todas as viagens em tempo real.</p></div></div>
+          <div class="section-toolbar"><div><h2>Corridas</h2><p class="muted">Acompanhe, gira e elimine pedidos ou viagens da conta.</p></div></div>
           <div class="filter-row"><div class="search"><i class="hgi hgi-stroke hgi-search-01"></i><input id="searchRidesInput" placeholder="Pesquisar corrida..."></div></div>
-          <div class="panel table-panel standalone"><div class="table-scroll"><table><thead><tr><th>ID</th><th>Passageiro</th><th>Motorista</th><th>Origem</th><th>Destino</th><th>Valor</th><th>Estado</th></tr></thead><tbody id="fullRidesTable">
-            <tr><td colspan="7" style="text-align: center;">A carregar...</td></tr>
+          <div class="panel table-panel standalone"><div class="table-scroll"><table><thead><tr><th>ID</th><th>Passageiro</th><th>Motorista</th><th>Origem</th><th>Destino</th><th>Valor</th><th>Estado</th><th>Ações</th></tr></thead><tbody id="fullRidesTable">
+            <tr><td colspan="8" style="text-align: center;">A carregar...</td></tr>
           </tbody></table></div></div>
         </section>
 
@@ -234,56 +237,48 @@
 
         <section class="page-section placeholder-page" id="support"><div class="empty-card"><div class="empty-icon"><i class="hgi hgi-stroke hgi-headphones"></i></div><h2>Suporte</h2><p>Central de atendimento.</p></div></section>
 
-        <!-- Analytics Avançado -->
-        <section class="page-section" id="analytics">
+        <!-- Configurações (Preços por Km e Versão do App) -->
+        <section class="page-section" id="configs">
           <div class="section-toolbar">
             <div>
-              <h2>Analytics & Relatórios</h2>
-              <p class="muted">Análise de desempenho da frota e métricas baseadas no progresso real.</p>
+              <h2>Configurações do Sistema</h2>
+              <p class="muted">Gira os preços cobrados por quilómetro e a versão atual da aplicação.</p>
             </div>
           </div>
           <div class="dashboard-grid">
             <article class="panel">
               <div class="panel-header">
-                <div><h3>Crescimento de Viagens</h3><p>Volume acumulado por período</p></div>
+                <div><h3>Tarifas por Quilómetro (MT)</h3><p>Preços aplicados por tipo de transporte</p></div>
               </div>
-              <div class="chart-wrap">
-                <div class="chart-y" id="analyticsYLabels"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div>
-                <div class="chart-area">
-                  <div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div><div class="grid-line"></div>
-                  <svg viewBox="0 0 700 260" preserveAspectRatio="none" class="line-chart" id="analyticsSvgChart">
-                    <path id="analyticsSvgLine" d="M0 260 L700 260" fill="none" stroke="#3976d8" stroke-width="3" stroke-linecap="round"/>
-                    <circle id="analyticsSvgCircle" cx="700" cy="260" r="5" fill="#fff" stroke="#3976d8" stroke-width="3"/>
-                  </svg>
-                  <div class="chart-x" id="analyticsXLabels"><span>Início</span><span>Fim</span></div>
+              <form id="pricingForm" style="display: flex; flex-direction: column; gap: 16px; padding-top: 10px;">
+                <div class="form-group">
+                  <label style="display:block; font-size:12px; font-weight:600; color:#4b525d; margin-bottom:6px;">Preço Txopela / Km (MT)</label>
+                  <input type="number" step="0.01" id="inputTxopela" style="width:100%; height:42px; border:1px solid #e2e5e9; border-radius:8px; padding:0 12px; font-size:13px; outline:none;" required>
                 </div>
-              </div>
+                <div class="form-group">
+                  <label style="display:block; font-size:12px; font-weight:600; color:#4b525d; margin-bottom:6px;">Preço Mototáxi / Km (MT)</label>
+                  <input type="number" step="0.01" id="inputMototaxi" style="width:100%; height:42px; border:1px solid #e2e5e9; border-radius:8px; padding:0 12px; font-size:13px; outline:none;" required>
+                </div>
+                <div class="form-group">
+                  <label style="display:block; font-size:12px; font-weight:600; color:#4b525d; margin-bottom:6px;">Preço Carro Eco / Km (MT)</label>
+                  <input type="number" step="0.01" id="inputCarro" style="width:100%; height:42px; border:1px solid #e2e5e9; border-radius:8px; padding:0 12px; font-size:13px; outline:none;" required>
+                </div>
+                <button type="submit" class="primary-btn" style="justify-content: center; margin-top: 5px;"><i class="hgi hgi-stroke hgi-checkmark-circle-02"></i> Guardar Tarifas</button>
+              </form>
             </article>
 
             <article class="panel">
               <div class="panel-header">
-                <div><h3>Métricas da Frota</h3><p>Taxa de conclusão e conversão</p></div>
+                <div><h3>Versão da Aplicação</h3><p>Controlo de atualizações dos utilizadores</p></div>
               </div>
-              <div style="padding: 10px 0;">
-                <div style="margin-bottom: 20px;">
-                  <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px;">
-                    <span>Corridas Concluídas com Sucesso</span>
-                    <span id="analyticsSuccessRate">0%</span>
-                  </div>
-                  <div class="mini-progress" style="height:10px;"><div id="analyticsProgressBar" style="width:0%"></div></div>
+              <form id="versionForm" style="display: flex; flex-direction: column; gap: 16px; padding-top: 10px;">
+                <div class="form-group">
+                  <label style="display:block; font-size:12px; font-weight:600; color:#4b525d; margin-bottom:6px;">Versão Atual (Ex: 1.0.0)</label>
+                  <input type="text" id="inputAppVersion" style="width:100%; height:42px; border:1px solid #e2e5e9; border-radius:8px; padding:0 12px; font-size:13px; outline:none;" required>
                 </div>
-                <div style="margin-bottom: 20px;">
-                  <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:8px;">
-                    <span>Motoristas Online Atuais</span>
-                    <span id="analyticsOnlineDriversCount">0</span>
-                  </div>
-                  <div class="mini-progress purple-progress" style="height:10px;"><div id="analyticsDriverProgressBar" style="width:0%"></div></div>
-                </div>
-                <div style="background:#fafafa; padding:15px; border-radius:10px; margin-top:15px;">
-                  <strong style="font-size:13px; display:block; margin-bottom:4px;">Receita Média por Corrida</strong>
-                  <span id="analyticsAvgRevenue" style="font-size:22px; font-weight:700; color:#f36b00;">0 MT</span>
-                </div>
-              </div>
+                <p class="muted" style="font-size:12px; line-height:1.5;">Quando atualizar a versão aqui, os clientes com versões anteriores na aplicação receberão o aviso de atualização através do Firebase.</p>
+                <button type="submit" class="primary-btn" style="justify-content: center; margin-top: 15px;"><i class="hgi hgi-stroke hgi-upload-02"></i> Atualizar Versão</button>
+              </form>
             </article>
           </div>
         </section>
