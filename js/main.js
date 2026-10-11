@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -26,6 +26,17 @@ function hideLoadingOverlay() {
   }
 }
 
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.querySelector('span').textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+}
+
 // --- PROTEÇÃO DE ROTA & AUTENTICAÇÃO ---
 onAuthStateChanged(auth, (user) => {
   const localUser = localStorage.getItem('vilataxi_user');
@@ -43,13 +54,11 @@ onAuthStateChanged(auth, (user) => {
 });
 
 function updateAdminProfileUI(info) {
-  // Atualizar nome na sidebar e na saudação
   const sidebarName = document.getElementById('sidebarAdminName');
   const greetingName = document.getElementById('greetingUserName');
   const adminEmailElements = document.querySelectorAll('.admin-info span');
   const avatarElements = document.querySelectorAll('.avatar, .top-avatar');
 
-  // Formatar nome amigável (primeiro nome ou nome completo)
   let displayName = info.name || 'Administrador';
   if (displayName.includes('@')) {
     displayName = displayName.split('@')[0];
@@ -186,7 +195,7 @@ onValue(driversRef, (snapshot) => {
 
     if (driver.pedidos) {
       Object.entries(driver.pedidos).forEach(([rideId, ride]) => {
-        allRides.push({ ...ride, id: rideId, driverName: driver.nome || 'Motorista' });
+        allRides.push({ ...ride, id: rideId, driverId: driverId, driverName: driver.nome || 'Motorista' });
 
         if (ride.status === 'concluido' || ride.status === 'concluida') {
           completedRidesCount++;
@@ -221,163 +230,67 @@ onValue(driversRef, (snapshot) => {
   renderRidesTables();
   renderPaymentsTable();
   renderRealtimeActivity();
-  renderChartsAndAnalytics(totalRevenue, completedRidesCount, onlineDrivers, totalDrivers);
   checkInitialLoadingComplete();
 });
 
-// --- GRÁFICOS DINÂMICOS ---
-function renderChartsAndAnalytics(totalRevenue, completedCount, onlineDrivers, totalDrivers) {
-  const chartHeight = 225;
-  const chartWidth = 700;
-  
-  let sortedRides = [...allRides].sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
-  let points = [];
-  
-  if (sortedRides.length > 0) {
-    let runningSum = 0;
-    let maxVal = 0;
-    
-    sortedRides.forEach(r => {
-      let val = Number(r.valorTotal || 0);
-      runningSum += val;
-      points.push(runningSum);
-      if (runningSum > maxVal) maxVal = runningSum;
-    });
-    
-    if (maxVal === 0) maxVal = 1000;
-    
-    const yLabels = document.getElementById('chartYLabels');
-    if (yLabels) {
-      yLabels.innerHTML = `
-        <span>${Math.round(maxVal)}k</span>
-        <span>${Math.round(maxVal * 0.75)}k</span>
-        <span>${Math.round(maxVal * 0.5)}k</span>
-        <span>${Math.round(maxVal * 0.25)}k</span>
-        <span>0</span>
-      `;
-    }
-
-    let svgCoords = [];
-    let n = points.length;
-    points.forEach((val, i) => {
-      let x = n > 1 ? (i / (n - 1)) * chartWidth : chartWidth / 2;
-      let y = chartHeight - (val / maxVal) * (chartHeight - 20);
-      svgCoords.push({x, y});
-    });
-
-    if (svgCoords.length === 1) {
-      svgCoords.unshift({x: 0, y: chartHeight});
-    }
-
-    let pathD = `M ${svgCoords[0].x} ${svgCoords[0].y}`;
-    for (let i = 1; i < svgCoords.length; i++) {
-      pathD += ` L ${svgCoords[i].x} ${svgCoords[i].y}`;
-    }
-
-    let areaD = pathD + ` L ${chartWidth} ${chartHeight} L 0 ${chartHeight} Z`;
-
-    const lineEl = document.getElementById('revenueSvgLine');
-    const areaEl = document.getElementById('revenueSvgArea');
-    const circleEl = document.getElementById('revenueSvgCircle');
-
-    if (lineEl && areaEl && circleEl && svgCoords.length > 0) {
-      lineEl.setAttribute('d', pathD);
-      areaEl.setAttribute('d', areaD);
-      let lastPt = svgCoords[svgCoords.length - 1];
-      circleEl.setAttribute('cx', lastPt.x);
-      circleEl.setAttribute('cy', lastPt.y);
-    }
-  }
-
-  const analyticsSvgLine = document.getElementById('analyticsSvgLine');
-  const analyticsSvgCircle = document.getElementById('analyticsSvgCircle');
-  const analyticsYLabels = document.getElementById('analyticsYLabels');
-
-  if (analyticsSvgLine && sortedRides.length > 0) {
-    let maxRides = sortedRides.length;
-    if (maxRides < 5) maxRides = 5;
-
-    if (analyticsYLabels) {
-      analyticsYLabels.innerHTML = `
-        <span>${maxRides}</span>
-        <span>${Math.round(maxRides * 0.75)}</span>
-        <span>${Math.round(maxRides * 0.5)}</span>
-        <span>${Math.round(maxRides * 0.25)}</span>
-        <span>0</span>
-      `;
-    }
-
-    let analyticsCoords = [];
-    sortedRides.forEach((r, i) => {
-      let x = (i / (sortedRides.length - 1 || 1)) * chartWidth;
-      let y = chartHeight - ((i + 1) / maxRides) * (chartHeight - 20);
-      analyticsCoords.push({x, y});
-    });
-
-    if (analyticsCoords.length === 1) {
-      analyticsCoords.unshift({x: 0, y: chartHeight});
-    }
-
-    let aPathD = `M ${analyticsCoords[0].x} ${analyticsCoords[0].y}`;
-    for (let i = 1; i < analyticsCoords.length; i++) {
-      aPathD += ` L ${analyticsCoords[i].x} ${analyticsCoords[i].y}`;
-    }
-
-    analyticsSvgLine.setAttribute('d', aPathD);
-    let lastA = analyticsCoords[analyticsCoords.length - 1];
-    analyticsSvgCircle.setAttribute('cx', lastA.x);
-    analyticsSvgCircle.setAttribute('cy', lastA.y);
-  }
-
-  let successRate = allRides.length > 0 ? Math.round((completedCount / allRides.length) * 100) : 0;
-  const successEl = document.getElementById('analyticsSuccessRate');
-  const progressBarEl = document.getElementById('analyticsProgressBar');
-  if (successEl && progressBarEl) {
-    successEl.textContent = successRate + '%';
-    progressBarEl.style.width = successRate + '%';
-  }
-
-  const onlineDriversCountEl = document.getElementById('analyticsOnlineDriversCount');
-  const driverProgressBarEl = document.getElementById('analyticsDriverProgressBar');
-  if (onlineDriversCountEl && driverProgressBarEl) {
-    onlineDriversCountEl.textContent = onlineDrivers + ' / ' + totalDrivers;
-    let dPct = totalDrivers > 0 ? Math.round((onlineDrivers / totalDrivers) * 100) : 0;
-    driverProgressBarEl.style.width = dPct + '%';
-  }
-
-  let avgRev = completedCount > 0 ? Math.round(totalRevenue / completedCount) : 0;
-  const avgRevEl = document.getElementById('analyticsAvgRevenue');
-  if (avgRevEl) {
-    avgRevEl.textContent = avgRev.toLocaleString() + ' MT';
-  }
-
-  renderSparklines();
-}
-
-function renderSparklines() {
-  const revSpark = document.getElementById('revenueSparkline');
-  const ridesSpark = document.getElementById('ridesSparkline');
-  
-  if (revSpark && allRides.length > 0) {
-    revSpark.innerHTML = '';
-    allRides.slice(-8).forEach((r) => {
-      let span = document.createElement('span');
-      let val = Number(r.valorTotal || 10);
-      let heightPct = Math.min(100, Math.max(20, (val / 500) * 100));
-      span.style.height = heightPct + '%';
-      revSpark.appendChild(span);
+// --- ELIMINAR CORRIDA/PEDIDO ---
+window.deleteRide = function(driverId, rideId) {
+  if (confirm("Tem certeza absoluta que deseja apagar este pedido/corrida? Esta ação não pode ser desfeita.")) {
+    const rideRef = ref(db, `drivers/${driverId}/pedidos/${rideId}`);
+    remove(rideRef).then(() => {
+      showToast("Pedido apagado com sucesso.");
+    }).catch((error) => {
+      alert("Erro ao apagar pedido: " + error.message);
     });
   }
+};
 
-  if (ridesSpark && allRides.length > 0) {
-    ridesSpark.innerHTML = '';
-    allRides.slice(-8).forEach((r, idx) => {
-      let span = document.createElement('span');
-      span.style.height = (40 + (idx * 7) % 60) + '%';
-      ridesSpark.appendChild(span);
-    });
+// --- GESTÃO DE CONFIGURAÇÕES (PREÇOS E VERSÃO) ---
+const precoRef = ref(db, 'preco');
+onValue(precoRef, (snapshot) => {
+  const data = snapshot.val() || {};
+  if (document.getElementById('inputTxopela')) {
+    document.getElementById('inputTxopela').value = data.txopela || data.Txopela || '';
+    document.getElementById('inputMototaxi').value = data.mototaxi || data.Mototaxi || '';
+    document.getElementById('inputCarro').value = data.carro || data.carro_eco || data['Carro Eco'] || '';
   }
-}
+});
+
+const updateRef = ref(db, 'update');
+onValue(updateRef, (snapshot) => {
+  const val = snapshot.val();
+  if (document.getElementById('inputAppVersion') && val) {
+    document.getElementById('inputAppVersion').value = val;
+  }
+});
+
+document.getElementById('pricingForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const txopela = Number(document.getElementById('inputTxopela').value);
+  const mototaxi = Number(document.getElementById('inputMototaxi').value);
+  const carro = Number(document.getElementById('inputCarro').value);
+
+  set(ref(db, 'preco'), {
+    txopela: txopela,
+    mototaxi: mototaxi,
+    carro: carro
+  }).then(() => {
+    showToast("Tarifas atualizadas com sucesso!");
+  }).catch(err => {
+    alert("Erro ao atualizar tarifas: " + err.message);
+  });
+});
+
+document.getElementById('versionForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const versao = document.getElementById('inputAppVersion').value;
+
+  set(ref(db, 'update'), versao).then(() => {
+    showToast("Versão do aplicativo atualizada com sucesso!");
+  }).catch(err => {
+    alert("Erro ao atualizar versão: " + err.message);
+  });
+});
 
 function renderRidesTables() {
   let overviewTable = document.getElementById('overviewRidesTable');
@@ -388,7 +301,7 @@ function renderRidesTables() {
 
   if (allRides.length === 0) {
     if(overviewTable) overviewTable.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhuma corrida registada.</td></tr>';
-    if(fullTable) fullTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhuma corrida registada.</td></tr>';
+    if(fullTable) fullTable.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhuma corrida registada.</td></tr>';
     return;
   }
 
@@ -430,6 +343,7 @@ function renderRidesTables() {
         <td>${r.destino || '—'}</td>
         <td>${r.valorTotal ? r.valorTotal + ' MT' : '—'}</td>
         <td><span class="badge ${badgeClass}">${r.status || 'pendente'}</span></td>
+        <td><button class="danger-action-btn" onclick="deleteRide('${r.driverId}', '${r.id}')"><i class="hgi hgi-stroke hgi-delete-02"></i> Apagar</button></td>
       `;
       fullTable.appendChild(tr);
     });
@@ -497,7 +411,7 @@ const titles = {
   passengers: 'Passageiros',
   payments: 'Pagamentos',
   support: 'Suporte',
-  analytics: 'Analytics & Relatórios'
+  configs: 'Configurações'
 };
 
 function openSection(id){
